@@ -136,6 +136,9 @@
             const accounts = localStorage;
             let result = '';
             for (let account in accounts) {
+                if (!accounts.hasOwnProperty(account)) {
+                    continue;
+                }
                 result += `${account}: ${accounts[account]}\n`;
             }
             alert(result);
