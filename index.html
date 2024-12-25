@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Transact</h1>
+    <p>Transfer Money</p>
+    <input type="text" id="sourceNumber" placeholder="Source Account Number">
+    <input type="text" id="targetNumber" placeholder="Target Account Number">
+    <input type="text" id="amount" placeholder="Amount">
+    <button onclick="transferMoney()">Transfer</button>
+
+    <p>Create Account</p>
+    <input type="text" id="accountNumber" placeholder="Account Number">
+    <input type="text" id="balance" placeholder="Balance">
+    <button onclick="createAccount()">Create Account</button>
+
+    <p>Check Balance</p>
+    <input type="text" id="checkBalance" placeholder="Account Number">
+    <button onclick="checkBalance()">Check Balance</button>
+
+    <p>Delete Account</p>
+    <input type="text" id="deleteAccount" placeholder="Account Number">
+    <button onclick="deleteAccount()">Delete Account</button>
+
+    <p>List Accounts</p>
+    <button onclick="listAccounts()">List Accounts</button>
+
+    <script type="text/javascript">
+
+        function transact(amount, sourceNumber, targetNumber) {
+            if (localStorage.getItem(sourceNumber) === null) {
+                throw new Error('Source account does not exist');
+            }
+            if (localStorage.getItem(targetNumber) === null) {
+                throw new Error('Target account does not exist');
+            }
+            
+            if (parseFloat(localStorage.getItem(sourceNumber)) < amount) {
+                throw new Error('Insufficient funds');
+            }
+        
+            setAccount(sourceNumber, parseFloat(localStorage.getItem(sourceNumber)) - amount);
+            setAccount(targetNumber, parseFloat(localStorage.getItem(targetNumber)) + amount);
+        }
+        
+        function setAccount(name, balance) {
+            localStorage.setItem(name, balance);
+        }
+        
+        function getAccount(name) {
+            return parseFloat(localStorage.getItem(name));
+        }
+        function transferMoney() {
+            const sourceNumber = document.getElementById('sourceNumber').value;
+            const targetNumber = document.getElementById('targetNumber').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            try {
+                transact(amount, sourceNumber, targetNumber);
+                alert('Transaction successful');
+            } catch (error) {
+                alert(error.message);
+            }
+          }
+        function createAccount() {
+            const accountNumber = document.getElementById('accountNumber').value;
+            const balance = parseFloat(document.getElementById('balance').value);
+
+            try {
+                setAccount(accountNumber, balance);
+                alert('Account created successfully');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+        function checkBalance() {
+            const accountNumber = document.getElementById('checkBalance').value;
+        
+            try {
+                const balance = getAccount(accountNumber);
+                alert(`Account balance is ${balance}`);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+        function deleteAccount() {
+            const accountNumber = document.getElementById('deleteAccount').value;
+        
+            try {
+                localStorage.removeItem(accountNumber);
+                alert('Account deleted successfully');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+        function listAccounts() {
+            const accounts = localStorage;
+            alert(Object.keys(localStorage));
+        }
+    </script>
+</body>
+</html>
