@@ -5,16 +5,26 @@
 </head>
 <body>
     <h1>Transact</h1>
+    <p>Create Account</p>
+    <input type="text" id="accountNumber" placeholder="Account Number">
+    <input type="text" id="balance" placeholder="Balance">
+    <button onclick="createAccount()">Create Account</button>
+
     <p>Transfer Money</p>
     <input type="text" id="sourceNumber" placeholder="Source Account Number">
     <input type="text" id="targetNumber" placeholder="Target Account Number">
     <input type="text" id="amount" placeholder="Amount">
     <button onclick="transferMoney()">Transfer</button>
 
-    <p>Create Account</p>
-    <input type="text" id="accountNumber" placeholder="Account Number">
-    <input type="text" id="balance" placeholder="Balance">
-    <button onclick="createAccount()">Create Account</button>
+    <p>Deposit</p>
+    <input type="text" id="depositAccount" placeholder="Account Number">
+    <input type="text" id="depositAmount" placeholder="Amount">
+    <button onclick="deposit(parseFloat(document.getElementById('depositAmount').value), document.getElementById('depositAccount').value)">Deposit</button>
+
+    <p>Withdraw</p>
+    <input type="text" id="withdrawAccount" placeholder="Account Number">
+    <input type="text" id="withdrawAmount" placeholder="Amount">
+    <button onclick="withdraw(parseFloat(document.getElementById('withdrawAmount').value), document.getElementById('withdrawAccount').value)">Withdraw</button>
 
     <p>Check Balance</p>
     <input type="text" id="checkBalance" placeholder="Account Number">
@@ -26,6 +36,9 @@
 
     <p>List Accounts</p>
     <button onclick="listAccounts()">List Accounts</button>
+
+    <p>Reset All</p>
+    <button onclick="localStorage.clear()">Reset All</button>
 
     <script type="text/javascript">
 
@@ -44,14 +57,38 @@
             setAccount(sourceNumber, parseFloat(localStorage.getItem(sourceNumber)) - amount);
             setAccount(targetNumber, parseFloat(localStorage.getItem(targetNumber)) + amount);
         }
+
+        function deposit(amount, accountNumber) {
+            if (localStorage.getItem(accountNumber) === null) {
+                throw new Error('Account does not exist');
+            }
+            localStorage.setItem(accountNumber, parseFloat(localStorage.getItem(accountNumber)) + amount);
+        }
+
+        function withdraw(amount, accountNumber) {
+            if (localStorage.getItem(accountNumber) === null) {
+                throw new Error('Account does not exist');
+            }
+            if (parseFloat(localStorage.getItem(accountNumber)) < amount) {
+                throw new Error('Insufficient funds');
+            }
+            localStorage.setItem(accountNumber, parseFloat(localStorage.getItem(accountNumber)) - amount);
+        }
         
         function setAccount(name, balance) {
+            if (localStorage.getItem(name) != null) {
+                throw new Error('Account already exists');
+            }
+            if (!balance) {
+                balance = 0;
+            }
             localStorage.setItem(name, balance);
         }
         
         function getAccount(name) {
             return parseFloat(localStorage.getItem(name));
         }
+
         function transferMoney() {
             const sourceNumber = document.getElementById('sourceNumber').value;
             const targetNumber = document.getElementById('targetNumber').value;
@@ -97,7 +134,11 @@
         }
         function listAccounts() {
             const accounts = localStorage;
-            alert(Object.keys(localStorage));
+            let result = '';
+            for (let account in accounts) {
+                result += `${account}: ${accounts[account]}\n`;
+            }
+            alert(result);
         }
     </script>
 </body>
