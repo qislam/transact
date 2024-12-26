@@ -2,43 +2,70 @@
 <html>
 <head>
     <title>Home</title>
+    <script type="module" src="js/transactAccountList.js"></script>
+    <style>
+        input {
+            margin: 5px;
+            display: block;
+        }
+        button {
+            margin: 5px;
+            display: block;
+        }
+        section {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: antiquewhite;
+            border-radius: 15px;
+        }
+    </style>
 </head>
-<body>
-    <h1>Transact</h1>
-    <p>Create Account</p>
-    <input type="text" id="accountNumber" placeholder="Account Number">
-    <input type="text" id="balance" placeholder="Balance">
-    <button onclick="createAccount()">Create Account</button>
+<body onload="listAccounts()">
+    <center>
+        <h1>Transact</h1>
+        <section>
+            <transact-account-list></transact-account-list>
+        </section>
 
-    <p>Transfer Money</p>
-    <input type="text" id="sourceNumber" placeholder="Source Account Number">
-    <input type="text" id="targetNumber" placeholder="Target Account Number">
-    <input type="text" id="amount" placeholder="Amount">
-    <button onclick="transferMoney()">Transfer</button>
+        <section>
+            <p>Transfer Money</p>
+            <input type="text" id="sourceNumber" placeholder="Source Account Number">
+            <input type="text" id="targetNumber" placeholder="Target Account Number">
+            <input type="text" id="amount" placeholder="Amount">
+            <button onclick="transferMoney()">Transfer</button>
+        </section>
 
-    <p>Deposit</p>
-    <input type="text" id="depositAccount" placeholder="Account Number">
-    <input type="text" id="depositAmount" placeholder="Amount">
-    <button onclick="deposit(parseFloat(document.getElementById('depositAmount').value), document.getElementById('depositAccount').value)">Deposit</button>
+        <section>
+            <p>Deposit</p>
+            <input type="text" id="depositAccount" placeholder="Account Number">
+            <input type="text" id="depositAmount" placeholder="Amount">
+            <button onclick="deposit(parseFloat(document.getElementById('depositAmount').value), document.getElementById('depositAccount').value)">Deposit</button>
+        </section>
+        
+        <section>
+            <p>Withdraw</p>
+            <input type="text" id="withdrawAccount" placeholder="Account Number">
+            <input type="text" id="withdrawAmount" placeholder="Amount">
+            <button onclick="withdraw(parseFloat(document.getElementById('withdrawAmount').value), document.getElementById('withdrawAccount').value)">Withdraw</button>
+        </section>
 
-    <p>Withdraw</p>
-    <input type="text" id="withdrawAccount" placeholder="Account Number">
-    <input type="text" id="withdrawAmount" placeholder="Amount">
-    <button onclick="withdraw(parseFloat(document.getElementById('withdrawAmount').value), document.getElementById('withdrawAccount').value)">Withdraw</button>
+        <section>
+            <p>Create New Account</p>
+            <input type="text" id="accountNumber" placeholder="Account Number">
+            <input type="text" id="balance" placeholder="Balance">
+            <button onclick="createAccount()">Create Account</button>
+        </section>
+        
+        <section>
+            <input type="text" id="deleteAccount" placeholder="Account Number">
+            <button onclick="deleteAccount()">Delete Account</button>
+        </section>
 
-    <p>Check Balance</p>
-    <input type="text" id="checkBalance" placeholder="Account Number">
-    <button onclick="checkBalance()">Check Balance</button>
-
-    <p>Delete Account</p>
-    <input type="text" id="deleteAccount" placeholder="Account Number">
-    <button onclick="deleteAccount()">Delete Account</button>
-
-    <p>List Accounts</p>
-    <button onclick="listAccounts()">List Accounts</button>
-
-    <p>Reset All</p>
-    <button onclick="localStorage.clear()">Reset All</button>
+        <section>
+            <button onclick="localStorage.clear()">Reset All</button>
+        </section>
+    </center>
 
     <script type="text/javascript">
 
@@ -54,8 +81,9 @@
                 throw new Error('Insufficient funds');
             }
         
-            setAccount(sourceNumber, parseFloat(localStorage.getItem(sourceNumber)) - amount);
-            setAccount(targetNumber, parseFloat(localStorage.getItem(targetNumber)) + amount);
+            localStorage.setItem(sourceNumber, parseFloat(localStorage.getItem(sourceNumber)) - amount);
+            localStorage.setItem(targetNumber, parseFloat(localStorage.getItem(targetNumber)) + amount);
+            listAccounts();
         }
 
         function deposit(amount, accountNumber) {
@@ -63,6 +91,7 @@
                 throw new Error('Account does not exist');
             }
             localStorage.setItem(accountNumber, parseFloat(localStorage.getItem(accountNumber)) + amount);
+            listAccounts();
         }
 
         function withdraw(amount, accountNumber) {
@@ -73,6 +102,7 @@
                 throw new Error('Insufficient funds');
             }
             localStorage.setItem(accountNumber, parseFloat(localStorage.getItem(accountNumber)) - amount);
+            listAccounts();
         }
         
         function setAccount(name, balance) {
@@ -83,6 +113,7 @@
                 balance = 0;
             }
             localStorage.setItem(name, balance);
+            listAccounts();
         }
         
         function getAccount(name) {
@@ -97,6 +128,7 @@
             try {
                 transact(amount, sourceNumber, targetNumber);
                 alert('Transaction successful');
+                listAccounts();
             } catch (error) {
                 alert(error.message);
             }
@@ -108,6 +140,7 @@
             try {
                 setAccount(accountNumber, balance);
                 alert('Account created successfully');
+                listAccounts();
             } catch (error) {
                 alert(error.message);
             }
@@ -128,20 +161,24 @@
             try {
                 localStorage.removeItem(accountNumber);
                 alert('Account deleted successfully');
+                listAccounts();
             } catch (error) {
                 alert(error.message);
             }
         }
         function listAccounts() {
-            const accounts = localStorage;
-            let result = '';
-            for (let account in accounts) {
-                if (!accounts.hasOwnProperty(account)) {
+            const accounts = [];
+            for (let account in localStorage) {
+                if (!localStorage.hasOwnProperty(account)) {
                     continue;
                 }
-                result += `${account}: ${accounts[account]}\n`;
+                accounts.push({
+                    name: account,
+                    balance: parseFloat(localStorage.getItem(account))
+                });
             }
-            alert(result);
+            let comp = document.querySelector('transact-account-list');
+            comp.accounts = accounts;
         }
     </script>
 </body>
