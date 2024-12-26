@@ -218,14 +218,26 @@
             listAccounts();
         }
         
-        function setAccount(name, balance) {
-            if (localStorage.getItem(name) != null) {
-                throw new Error('Account already exists');
+        function setAccount(names, balance) {
+            const nameList = names.split(',');
+            for (let name of nameList) {
+                name = name.trim().toUpperCase();
+                if (name.length < 1) {
+                    throw new Error('Account name cannot be empty');
+                }
+                if (name.length < 3) {
+                    throw new Error('Account name must be at least 3 characters');
+                }
+
+                if (localStorage.getItem(name) != null) {
+                    throw new Error('Account already exists');
+                }
+                if (!balance) {
+                    balance = 1500;
+                }
+                localStorage.setItem(name, balance);
             }
-            if (!balance) {
-                balance = 0;
-            }
-            localStorage.setItem(name, balance);
+            
             listAccounts();
         }
         
