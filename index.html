@@ -225,9 +225,6 @@
                 if (name.length < 1) {
                     throw new Error('Account name cannot be empty');
                 }
-                if (name.length < 3) {
-                    throw new Error('Account name must be at least 3 characters');
-                }
 
                 if (localStorage.getItem(name) != null) {
                     throw new Error('Account already exists');
