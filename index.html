@@ -267,8 +267,9 @@
             try {
                 transact(amount, sourceNumber, targetNumber);
                 listAccounts();
-                document.getElementById('sourceNumber').value = '';
-                document.getElementById('targetNumber').value = '';
+                document.getElementById('sourceAccountSelect').value = '';
+                document.getElementById('targetAccountSelect').value = '';
+                document.getElementById('amount').value = 0;
             } catch (error) {
                 alert(error.message);
             }
@@ -281,8 +282,8 @@
             try {
                 withdraw(amount, accountNumber);
                 listAccounts();
-                document.getElementById('withdrawAccount').value = '';
-                document.getElementById('withdrawAmount').value = '';
+                document.getElementById('withdrawAccountSelect').value = '';
+                document.getElementById('withdrawAmount').value = 0;
             } catch (error) {
                 alert(error.message);
             }
@@ -295,8 +296,8 @@
             try {
                 deposit(amount, accountNumber);
                 listAccounts();
-                document.getElementById('depositAccount').value = '';
-                document.getElementById('depositAmount').value = '';
+                document.getElementById('depositAccountSelect').value = '';
+                document.getElementById('depositAmount').value = 0;
             } catch (error) {
                 alert(error.message);
             }
