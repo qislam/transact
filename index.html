@@ -75,7 +75,7 @@
             </div>
             <div class="col-sm-12">
                 <center>
-                    <button onclick="resetAll()">Reset All</button>
+                    <button type="button" class="btn btn-primary" onclick="resetAll()">Reset All</button>
                 </center>
             </div>
         </div>
@@ -93,10 +93,16 @@
         
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <input type="text" id="sourceNumber" placeholder="Source Account Number">
-                    <input type="text" id="targetNumber" placeholder="Target Account Number">
-                    <input type="text" id="amount" placeholder="Amount">
-                    <button onclick="transferMoney()">Submit</button>
+                    <select id="sourceAccountSelect" class="form-select accountSelect">
+                        <option value="">Select Account</option>
+                    </select>
+                    <select id="targetAccountSelect" class="form-select accountSelect">
+                        <option value="">Select Account</option>
+                    </select>
+                    <input type="number" class="form-control"  id="amount" placeholder="Amount">
+                    <center>
+                        <button type="button" class="btn btn-primary" onclick="transferMoney()">Submit</button>
+                    </center>
                 </div>
             </div>
         </div>
@@ -114,9 +120,11 @@
         
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <input type="text" id="depositAccount" placeholder="Account Number">
-                    <input type="text" id="depositAmount" placeholder="Amount">
-                    <button onclick="depositMoney()">Submit</button>
+                    <select id="depositAccountSelect" class="form-select accountSelect">
+                        <option value="">Select Account</option>
+                    </select>
+                    <input type="number" class="form-control" id="depositAmount" placeholder="Amount">
+                    <button type="button" class="btn btn-primary" onclick="depositMoney()">Submit</button>
                 </div>
             </div>
         </div>
@@ -134,9 +142,15 @@
         
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <input type="text" id="withdrawAccount" placeholder="Account Number">
-                    <input type="text" id="withdrawAmount" placeholder="Amount">
-                    <button onclick="withdrawMoney()">Submit</button>
+                    <select id="withdrawAccountSelect" class="form-select accountSelect">
+                        <option value="">Select Account</option>
+                    </select>
+                    <br/>
+                    <input type="number" class="form-control"  id="withdrawAmount" placeholder="Amount">
+                    <br/>
+                    <center>
+                        <button type="button" class="btn btn-primary" onclick="withdrawMoney()">Submit</button>
+                    </center>
                 </div>
             </div>
         </div>
@@ -154,9 +168,11 @@
         
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <input type="text" id="accountNumber" placeholder="Account Number">
-                    <input type="text" id="balance" placeholder="Balance">
-                    <button onclick="createAccount()">Submit</button>
+                    <input type="text" class="form-control" id="accountNumber" placeholder="Account Number">
+                    <input type="number" class="form-control"  id="balance" placeholder="Balance">
+                    <center>
+                        <button type="button" class="btn btn-primary" onclick="createAccount()">Submit</button>
+                    </center>
                 </div>
             </div>
         </div>
@@ -175,11 +191,12 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <input type="text" id="deleteAccount" placeholder="Account Number">
-                    <button onclick="deleteAccount()">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteAccount()">Submit</button>
                 </div>
             </div>
         </div>
     </div>
+
     <script type="text/javascript">
 
         function transact(amount, sourceNumber, targetNumber) {
@@ -243,8 +260,8 @@
         }
 
         function transferMoney() {
-            const sourceNumber = document.getElementById('sourceNumber').value.toUpperCase();
-            const targetNumber = document.getElementById('targetNumber').value.toUpperCase();
+            const sourceNumber = document.getElementById('sourceAccountSelect').value.toUpperCase();
+            const targetNumber = document.getElementById('targetAccountSelect').value.toUpperCase();
             const amount = parseFloat(document.getElementById('amount').value);
             
             try {
@@ -258,7 +275,7 @@
         }
 
         function withdrawMoney() {
-            const accountNumber = document.getElementById('withdrawAccount').value.toUpperCase();
+            const accountNumber = document.getElementById('withdrawAccountSelect').value.toUpperCase();
             const amount = parseFloat(document.getElementById('withdrawAmount').value);
         
             try {
@@ -272,7 +289,7 @@
         }
 
         function depositMoney() {
-            const accountNumber = document.getElementById('depositAccount').value.toUpperCase();
+            const accountNumber = document.getElementById('depositAccountSelect').value.toUpperCase();
             const amount = parseFloat(document.getElementById('depositAmount').value);
         
             try {
@@ -319,6 +336,7 @@
                 alert(error.message);
             }
         }
+
         function listAccounts() {
             const accounts = [];
             for (let account in localStorage) {
@@ -332,7 +350,15 @@
             }
             let comp = document.querySelector('transact-account-list');
             comp.accounts = accounts;
+
+            for (el of document.querySelectorAll('.accountSelect')) {
+                el.innerHTML = '<option value="">Select Account</option>';
+                for (let account of accounts) {
+                    el.innerHTML += `<option value="${account.name}">${account.name}</option>`;
+                }
+            }
         }
+
         function resetAll() {
             localStorage.clear();
             listAccounts();
